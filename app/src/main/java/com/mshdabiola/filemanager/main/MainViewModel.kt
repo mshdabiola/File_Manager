@@ -10,6 +10,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import com.mshdabiola.filemanager.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ActivityContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,27 +33,29 @@ class MainViewModel @Inject constructor(
     val className = this::class.simpleName
     init {
         val askPermission = ContextCompat.checkSelfPermission(context,Manifest.permission.READ_EXTERNAL_STORAGE)==PackageManager.PERMISSION_DENIED
-        _uiState.value = _uiState.value.copy(onPermissionRequest = this::onPermissionRequest, askPermission = askPermission)
-        getAllFiles(Environment.getDataDirectory())
-        getAllFiles(Environment.getRootDirectory())
-        getAllFiles(Environment.getStorageDirectory())
-        getAllFiles(Environment.getExternalStorageDirectory())
-        getAllFiles(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS))
+        _uiState.value = _uiState.value.copy(
+            onPermissionRequest = this::onPermissionRequest,
+            askPermission = askPermission,
+            getAllFiles = this::getAllFiles
+            )
+
+       // getAllFiles(Environment.getExternalStorageDirectory().absolutePath)
     }
 
-    private fun getAllFiles(fileS : File){
+    private fun getAllFiles(string: String){
 
+        val pathStr = if (string.isEmpty()) Environment.getExternalStorageDirectory().absolutePath else string
+        Log.d(className,"$pathStr")
 
-       val file= fileS
-            .listFiles()
-            ?.mapNotNull { it }
+        val file = File(pathStr)
+         val fileUiStates= file.listFiles()
+             ?.map { FileUiState(name = it.name,isDirectory = it.isDirectory, path = it.toPath()) } ?: emptyList()
 
-      val fileString= file?.joinToString(separator = ",\n") { file -> file.name }
-        Log.d(className,fileS.absolutePath)
-        Log.d(className,fileString ?: "no files")
-
+        _uiState.value =_uiState.value.copy(fileUiStateList = fileUiStates, name = if(string.isEmpty()) context.getString(R.string.app_name) else file.name)
 
     }
+
+
 
 
 
