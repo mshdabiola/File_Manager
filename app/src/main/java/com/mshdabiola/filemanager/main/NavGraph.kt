@@ -7,15 +7,17 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.mshdabiola.filemanager.home.HomeUiState
 import com.mshdabiola.filemanager.main.MainUiState
+import com.mshdabiola.filemanager.ui.screen.HomeScreen
 import com.mshdabiola.filemanager.ui.screen.MainScreen
 import java.nio.file.Path
 
 @Composable
-fun ManagerNavHost(navHostController: NavHostController,mainUiState: State<MainUiState>) {
+fun ManagerNavHost(navHostController: NavHostController,mainUiState: State<MainUiState>,homeUiState: HomeUiState) {
     
     NavHost(navController = navHostController,
-        startDestination = "main",
+        startDestination = "home",
         modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal+ WindowInsetsSides.Vertical))
         ){
         composable("main"){
@@ -39,6 +41,10 @@ fun ManagerNavHost(navHostController: NavHostController,mainUiState: State<MainU
             })
 
             MainScreen(mainUiState = mainUiState,navHostController)
+        }
+
+        composable("home"){
+            HomeScreen(navController = navHostController, homeUiState = homeUiState)
         }
     }
     

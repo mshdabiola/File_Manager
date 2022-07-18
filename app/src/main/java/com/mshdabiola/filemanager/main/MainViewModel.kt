@@ -5,27 +5,27 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Environment
+import android.os.StatFs
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.mshdabiola.filemanager.R
+import com.mshdabiola.filemanager.home.HomeUiState
+import com.mshdabiola.filemanager.home.MemoryUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ActivityContext
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.io.File
-import java.nio.file.FileSystems
-import java.nio.file.Files
-import java.nio.file.Paths
 import javax.inject.Inject
 
 @RequiresApi(Build.VERSION_CODES.R)
 @HiltViewModel
 class MainViewModel @Inject constructor(
     val savedStateHandle: SavedStateHandle,
-    val context: Context
+    @ApplicationContext val context: Context
 ) : ViewModel(){
     val _uiState = MutableStateFlow(MainUiState("Main"))
     val uistate = _uiState.asStateFlow()
@@ -55,10 +55,6 @@ class MainViewModel @Inject constructor(
 
     }
 
-
-
-
-
     private fun onPermissionRequest(isGrant : Boolean){
 
         _uiState.value = _uiState.value.copy(askPermission = !isGrant)
@@ -70,4 +66,46 @@ class MainViewModel @Inject constructor(
         }
 
     }
+
+    //home properties and function
+
+    private val _homeUiState = MutableStateFlow(HomeUiState())
+    val homeUiState = _homeUiState.asStateFlow()
+    val storagePro = arrayOf("Internal Storage " to R.drawable.ic_baseline_phone_android_24,
+        "External SD Card" to R.drawable.ic_baseline_sd_storage_24)
+
+    init {
+        val storages=  getExternalStorage(context)
+
+      val memoryUiState=  storages.mapIndexed{index, path ->
+          val pair= storagePro[index]
+          MemoryUiState(name = pair.first, icon = pair.second,path=path ) }
+
+
+
+        _homeUiState.value = _homeUiState.value.copy(memoryUiStates = memoryUiState)
+
+
+        Environment.getStorageDirectory().listFiles()?.forEach {
+
+            Log.d(className,it.absolutePath)
+        }
+
+
+
+    }
+
+    private fun getExternalStorage(context: Context): List<String> {
+        val storages = ContextCompat.getExternalFilesDirs(context,null)
+
+        return storages.map { it.absolutePath.split("/Android").first() }
+
+
+
+    }
+
+
+
+
+
 }
