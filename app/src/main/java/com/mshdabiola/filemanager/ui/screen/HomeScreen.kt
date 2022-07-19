@@ -15,10 +15,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.mshdabiola.filemanager.R
+import com.mshdabiola.filemanager.home.CategoryUiState
+import com.mshdabiola.filemanager.home.HomeRecentFile
 import com.mshdabiola.filemanager.home.HomeUiState
 import com.mshdabiola.filemanager.home.MemoryUiState
 import com.mshdabiola.filemanager.ui.theme.FileManagerTheme
@@ -56,7 +59,7 @@ fun HomeContent(homeUiState: HomeUiState,onMemoryClicked : (String)->Unit={}) {
             ) {
                 homeUiState.memoryUiStates.forEachIndexed { index, memoryUiState ->
                     MemoryCard(modifier = Modifier
-                        .clickable { onMemoryClicked(memoryUiState.path.replace("/","*")) }
+                        .clickable { onMemoryClicked(memoryUiState.path.replace("/", "*")) }
                         .weight(1f),
                         memoryUiState = memoryUiState)
                    if (index==0) {
@@ -67,10 +70,22 @@ fun HomeContent(homeUiState: HomeUiState,onMemoryClicked : (String)->Unit={}) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = "Categories", style = MaterialTheme.typography.titleMedium,color=MaterialTheme.colorScheme.primary)
             Spacer(modifier = Modifier.height(8.dp))
-           for (i in 1..3){
+            val category= homeUiState.categoryUiStates
+            val columnSize = 3
+            var row =category.size/columnSize
+            if (category.size%columnSize != 0){
+                row+=1
+            }
+
+           for (i in 0 until row){
                Row (Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically){
-                   for (j in 1..3){
-                       CategoryCard()
+                   for (j in 0 until columnSize){
+                       val index = i*3+j
+
+                       if (index<category.size){
+                           CategoryCard(category[index], onClicked =  onMemoryClicked)
+                       }
+
                    }
                }
 
@@ -78,8 +93,8 @@ fun HomeContent(homeUiState: HomeUiState,onMemoryClicked : (String)->Unit={}) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = "Recent Files", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
             Spacer(modifier = Modifier.height(8.dp))
-          (1..10).toList().forEach {
-              ClickableFileCard(modifier = Modifier.fillMaxWidth())
+          homeUiState.homeRecentFiles.forEach {
+              ClickableFileCard(modifier = Modifier.fillMaxWidth(), recentFile = it)
               Spacer(modifier = Modifier.height(4.dp))
           }
 
@@ -92,7 +107,11 @@ fun HomeContent(homeUiState: HomeUiState,onMemoryClicked : (String)->Unit={}) {
 @Composable
 fun HomeContentPreview(){
     FileManagerTheme {
-        HomeContent(homeUiState = HomeUiState())
+        HomeContent(homeUiState = HomeUiState(memoryUiStates = arrayListOf(MemoryUiState(),
+            MemoryUiState()
+        ),
+        categoryUiStates = (1..8).map { CategoryUiState() }
+            ))
     }
 
 }
@@ -139,14 +158,19 @@ fun MemoryCardPreview() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CategoryCard() {
-    Column (horizontalAlignment = Alignment.CenterHorizontally){
+fun CategoryCard(categoryUiState: CategoryUiState= CategoryUiState(),onClicked: (String) -> Unit={}) {
+    Column (
+        modifier = Modifier.clickable {
+            onClicked(categoryUiState.path.replace("/","*")) },
+        horizontalAlignment = Alignment.CenterHorizontally){
         Card(
             modifier = Modifier.align(Alignment.CenterHorizontally)
         ) {
-            Icon(imageVector = Icons.Default.Info, contentDescription = "", modifier = Modifier.padding(16.dp))
+            Icon(imageVector = ImageVector.vectorResource(id = categoryUiState.icon),
+                contentDescription = categoryUiState.name,
+                modifier = Modifier.padding(16.dp))
         }
-        Text(text = "Document", style = MaterialTheme.typography.labelSmall)
+        Text(text = categoryUiState.name, style = MaterialTheme.typography.labelSmall)
     }
 
 }
@@ -159,14 +183,26 @@ fun CategoryCardPreview() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ClickableFileCard(modifier : Modifier=Modifier,contentModifier: Modifier=Modifier) {
+fun ClickableFileCard(modifier : Modifier=Modifier,
+                      contentModifier: Modifier=Modifier,
+                      recentFile: HomeRecentFile
+) {
     Card (modifier = modifier){
         Row(contentModifier.padding(4.dp)) {
             Icon(imageVector = Icons.Default.Menu, contentDescription = "",
                 modifier = contentModifier.size(50.dp))
             Column(modifier = contentModifier) {
-                Text(text = "Shoot Tuesday", style = MaterialTheme.typography.titleSmall)
-                Text(text = "473Kb", style = MaterialTheme.typography.bodySmall)
+                Text(text = recentFile.name,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Row {
+                    Text(text = recentFile.sizeStr, style = MaterialTheme.typography.bodySmall)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = recentFile.date.toString(), style = MaterialTheme.typography.bodySmall)
+                }
+
             }
         }
     }
@@ -175,5 +211,5 @@ fun ClickableFileCard(modifier : Modifier=Modifier,contentModifier: Modifier=Mod
 @Preview
 @Composable
 fun ClickableFileCardPreview() {
-    ClickableFileCard()
+    ClickableFileCard(recentFile = HomeRecentFile())
 }

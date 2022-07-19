@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.mshdabiola.filemanager.R
+import com.mshdabiola.filemanager.formatSize
 import java.io.File
 
 class MemoryUiState (val name : String="Internal Storage",
@@ -49,33 +50,5 @@ class MemoryUiState (val name : String="Internal Storage",
         return getTotalMemorySize(path)-getFreeMemorySize(path)
     }
 
-     fun Long.formatSize(): String{
-         val size =this.toFloat()
-        val kilobyte = 1024
-        val mb = kilobyte*kilobyte
-        val gb = mb*kilobyte
 
-        var sizeInFloat =0f
-        // val numberFormat = NumberFormat.getNumberInstance().format()
-        val suffix = when{
-
-
-            size >= gb -> {
-                sizeInFloat = (size/gb)
-
-                "Gb"
-            }
-            size >= mb -> {
-                sizeInFloat = (size/mb)
-                "Mb"
-            }
-            else ->{
-                sizeInFloat = (size/kilobyte)
-                "Kb"
-            }
-        }
-
-
-        return String.format("%2.2f %s",sizeInFloat,suffix)
-    }
 }
