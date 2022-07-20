@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -20,10 +19,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.mshdabiola.filemanager.R
-import com.mshdabiola.filemanager.home.CategoryUiState
-import com.mshdabiola.filemanager.home.HomeRecentFile
-import com.mshdabiola.filemanager.home.HomeUiState
-import com.mshdabiola.filemanager.home.MemoryUiState
+import com.mshdabiola.filemanager.ui.screen.home.CategoryUiState
+import com.mshdabiola.filemanager.ui.screen.home.HomeRecentFile
+import com.mshdabiola.filemanager.ui.screen.home.HomeUiState
+import com.mshdabiola.filemanager.ui.screen.home.MemoryUiState
 import com.mshdabiola.filemanager.ui.theme.FileManagerTheme
 
 @Composable
@@ -37,7 +36,7 @@ fun HomeScreen(homeUiState: HomeUiState, navController: NavController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeContent(homeUiState: HomeUiState,onMemoryClicked : (String)->Unit={}) {
+fun HomeContent(homeUiState: HomeUiState, onMemoryClicked : (String)->Unit={}) {
     val scrollState= rememberScrollState()
 
     Scaffold(topBar = {
@@ -107,7 +106,8 @@ fun HomeContent(homeUiState: HomeUiState,onMemoryClicked : (String)->Unit={}) {
 @Composable
 fun HomeContentPreview(){
     FileManagerTheme {
-        HomeContent(homeUiState = HomeUiState(memoryUiStates = arrayListOf(MemoryUiState(),
+        HomeContent(homeUiState = HomeUiState(memoryUiStates = arrayListOf(
+            MemoryUiState(),
             MemoryUiState()
         ),
         categoryUiStates = (1..8).map { CategoryUiState() }
@@ -119,7 +119,7 @@ fun HomeContentPreview(){
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MemoryCard(memoryUiState: MemoryUiState= MemoryUiState(), modifier: Modifier=Modifier,contentModifier: Modifier=Modifier) {
+fun MemoryCard(memoryUiState: MemoryUiState = MemoryUiState(), modifier: Modifier=Modifier, contentModifier: Modifier=Modifier) {
     Card(modifier = modifier,
 
 
@@ -158,7 +158,7 @@ fun MemoryCardPreview() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CategoryCard(categoryUiState: CategoryUiState= CategoryUiState(),onClicked: (String) -> Unit={}) {
+fun CategoryCard(categoryUiState: CategoryUiState = CategoryUiState(), onClicked: (String) -> Unit={}) {
     Column (
         modifier = Modifier.clickable {
             onClicked(categoryUiState.path.replace("/","*")) },

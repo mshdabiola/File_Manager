@@ -1,4 +1,4 @@
-package com.mshdabiola.filemanager.home
+package com.mshdabiola.filemanager.ui.screen.home
 
 import android.text.format.DateFormat
 import com.mshdabiola.filemanager.formatSize

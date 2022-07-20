@@ -1,4 +1,4 @@
-package com.mshdabiola.filemanager.home
+package com.mshdabiola.filemanager.ui.screen.home
 
 import android.os.Environment
 import android.os.StatFs

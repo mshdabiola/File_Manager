@@ -1,4 +1,4 @@
-package com.mshdabiola.filemanager.main
+package com.mshdabiola.filemanager.ui.screen.main
 
 data class MainUiState (
     val name : String,

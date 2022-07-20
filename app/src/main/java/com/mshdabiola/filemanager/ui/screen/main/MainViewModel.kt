@@ -1,12 +1,10 @@
-package com.mshdabiola.filemanager.main
+package com.mshdabiola.filemanager.ui.screen.main
 
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Environment
-import android.os.StatFs
-import android.provider.MediaStore
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
@@ -14,10 +12,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mshdabiola.filemanager.R
-import com.mshdabiola.filemanager.home.CategoryUiState
-import com.mshdabiola.filemanager.home.HomeRecentFile
-import com.mshdabiola.filemanager.home.HomeUiState
-import com.mshdabiola.filemanager.home.MemoryUiState
+import com.mshdabiola.filemanager.ui.screen.home.CategoryUiState
+import com.mshdabiola.filemanager.ui.screen.home.HomeRecentFile
+import com.mshdabiola.filemanager.ui.screen.home.HomeUiState
+import com.mshdabiola.filemanager.ui.screen.home.MemoryUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -51,14 +49,14 @@ class MainViewModel @Inject constructor(
     private fun getAllFiles(string: String){
 
         val pathStr = if (string.isEmpty()) Environment.getExternalStorageDirectory().absolutePath else string
-        Log.d(className,"$pathStr")
+        Log.d(className, pathStr)
 
         val file = File(pathStr)
          val fileUiStates= file.listFiles()
 
              ?.sortedWith(compareBy<File> { it.isFile }.thenBy { it.name })
              ?.filter { it.isHidden.not() }
-             ?.map { FileUiState(name = it.name,isDirectory = it.isDirectory, path = it.toPath()) } ?: emptyList()
+             ?.map { FileUiState(name = it.name,isDirectory = it.isDirectory, path = it.absolutePath) } ?: emptyList()
 
         _uiState.value =_uiState.value.copy(fileUiStateList = fileUiStates, name = if(string.isEmpty()) context.getString(R.string.app_name) else file.name)
 
@@ -115,7 +113,8 @@ class MainViewModel @Inject constructor(
             CategoryUiState(
                 name = "Music",
                 icon = R.drawable.ic_baseline_music_note_24,
-                path=getCategoryPath(Environment.DIRECTORY_MUSIC)))
+                path=getCategoryPath(Environment.DIRECTORY_MUSIC))
+        )
 
 
 
@@ -153,11 +152,14 @@ class MainViewModel @Inject constructor(
 
                 .toList()
 
-
-
-
             _homeUiState.value = _homeUiState.value.copy(homeRecentFiles = recentFile)
         }
+    }
+
+
+    private fun onFileClicked(path : String){
+
+
     }
 
 

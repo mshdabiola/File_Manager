@@ -1,4 +1,4 @@
-package com.mshdabiola.filemanager.main
+package com.mshdabiola.filemanager.ui.screen.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -7,7 +7,7 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.compose.rememberNavController
-import com.mshdabiola.filemanager.ui.ManagerNavHost
+import com.mshdabiola.filemanager.ui.screen.ManagerNavHost
 import com.mshdabiola.filemanager.ui.theme.FileManagerTheme
 import dagger.hilt.android.AndroidEntryPoint
 

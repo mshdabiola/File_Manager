@@ -1,4 +1,4 @@
-package com.mshdabiola.filemanager.home
+package com.mshdabiola.filemanager.ui.screen.home
 
 data class HomeUiState (
     val memoryUiStates: List<MemoryUiState> = emptyList(),
