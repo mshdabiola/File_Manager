@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">X File Manager</string>
+    <string name="onboarding_permission_title">Permission Needed</string>
+    <string name="onboarding_permission_content">To Serve you bester, we need permission to read and files</string>
+    <string name="onboarding_welcome_title">Organise you file faster</string>
+    <string name="onboarding_welcome_content">Sit back and watch as your files are renamed, moved, deleted as you want, instantly and automatically</string>
+    <string name="onboarding_finish_title">Start X File Manager</string>
+    <string name="onboarding_finish_content">Enjoy fast, free and full featured file manager</string>
+
+</resources>
